@@ -12,6 +12,8 @@ class AgentActivities {
     this.config = new Map(Object.entries(ActivitySettings));
   }
 
+  // NOTE: This will hide any TR activities that are NOT set in the flex config
+  // So make sure the deployed flex config contains all activities you'd like to appear in this menu
   getCSSConfig() {
     const { flex } = this.manager.store.getState();
     const { worker: { attributes }, activities } = flex.worker;
@@ -21,17 +23,48 @@ class AgentActivities {
     // NOTE: This will hide any TR activities that are NOT set in the config or for which 
     // the agent is not skilled
     return Array.from(activities.values()).reduce((results, activity, idx) => {
+      // default the cssConfig to hide this element
       let cssConfig = { idx, display: 'none', order: idx };
       const activitySetting = this.config.get(activity.name);
       if (activitySetting) {
         const { requiredSkill, sortOrder } = activitySetting;
         if (!requiredSkill || skills.includes(requiredSkill)) {
+          // show the activity
           cssConfig.display = 'flex';
         }
+        // set the order of the activity
         cssConfig.order = sortOrder;
       }
+      // return the element with all previous results into one array
       return [...results, cssConfig];
     }, []);
+  }
+
+
+  // NOTE: This will hide any TR activities that are NOT set in the flex config
+  // So make sure the deployed flex config contains all activities you'd like to appear in this menu
+  getEligibleActivites(worker) {
+    const { flex } = this.manager.store.getState();
+    const { worker: { attributes }, activities } = flex.worker;
+    const { routing = { skills: [], levels: {} } } = attributes;
+    let skills = routing.skills || [];
+
+    if (worker) {
+      const { routing: agentRouting = { skills: [], levels: {} } } = worker.attributes;
+      skills = agentRouting.skills || [];
+    }
+    const eligibleSkills = Array.from(activities.values()).reduce((results, activity) => {
+      const activityRule = this.config[activity.sid];
+      if (activityRule) {
+        const { requiredSkill, sortOrder } = activityRule;
+        if (!requiredSkill || skills.includes(requiredSkill)) {
+          return [...results, { sortOrder, activity }];
+        }
+      }
+      return results;
+    }, []);
+
+    return sortBy(eligibleSkills, 'sortOrder').map(result => result.activity);
   }
 }
 
