@@ -54,6 +54,16 @@ typings/
 # Yarn Integrity file
 .yarn-integrity
 
+# IntelliJ
+.idea/
+*.iml
+*.iws
+/out/
+
+# System Files
+Thumbs.db
+.DS_Store
+
 # dotenv environment variables file
 .env
 
