@@ -1,4 +1,5 @@
 import * as Flex from '@twilio/flex-ui';
+import { sortBy } from 'lodash';
 import { ActivitySettings } from '../../enums';
 
 class AgentActivities {
@@ -43,7 +44,7 @@ class AgentActivities {
 
   // NOTE: This will hide any TR activities that are NOT set in the flex config
   // So make sure the deployed flex config contains all activities you'd like to appear in this menu
-  getEligibleActivites(worker) {
+  getEligibleActivities(worker) {
     const { flex } = this.manager.store.getState();
     const { worker: { attributes }, activities } = flex.worker;
     const { routing = { skills: [], levels: {} } } = attributes;
@@ -54,9 +55,9 @@ class AgentActivities {
       skills = agentRouting.skills || [];
     }
     const eligibleSkills = Array.from(activities.values()).reduce((results, activity) => {
-      const activityRule = this.config[activity.sid];
-      if (activityRule) {
-        const { requiredSkill, sortOrder } = activityRule;
+      const activitySetting = this.config.get(activity.name);
+      if (activitySetting) {
+        const { requiredSkill, sortOrder } = activitySetting;
         if (!requiredSkill || skills.includes(requiredSkill)) {
           return [...results, { sortOrder, activity }];
         }

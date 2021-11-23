@@ -17,7 +17,7 @@ class NoTaskCanvasAvailability extends Component {
             return null;
         }
 
-        const activities = AgentActivities.getEligibleActivites(worker.worker);
+        const activities = AgentActivities.getEligibleActivities(worker.worker);
         return (
             <FormControlWrapper>
                 <FormControl fullWidth>

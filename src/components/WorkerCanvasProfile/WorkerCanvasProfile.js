@@ -22,7 +22,7 @@ class WorkerCanvasProfile extends Component {
       return null;
     }
 
-    const activities = AgentActivities.getEligibleActivites(worker);
+    const activities = AgentActivities.getEligibleActivities(worker);
     const currentActivity = activities.find(activity => activity.name === worker.activityName);
     return (
       <ContentWrapper>
