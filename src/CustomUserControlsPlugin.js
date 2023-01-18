@@ -1,9 +1,7 @@
 import React from 'react';
 import { VERSION } from '@twilio/flex-ui';
-import * as FlexPlugin from '@twilio/flex-plugin';
+import { FlexPlugin }  from '@twilio/flex-plugin';
 import CustomizeFlexComponents from './init/components';
-
-import reducers, { namespace } from './states';
 
 const PLUGIN_NAME = 'CustomUserControlsPlugin';
 
@@ -20,22 +18,8 @@ export default class CustomUserControlsPlugin extends FlexPlugin {
    * @param manager { import('@twilio/flex-ui').Manager }
    */
   init(flex, manager) {
-    this.registerReducers(manager);
     CustomizeFlexComponents(flex, manager);
   }
 
-  /**
-   * Registers the plugin reducers
-   *
-   * @param manager { Flex.Manager }
-   */
-  registerReducers(manager) {
-    if (!manager.store.addReducer) {
-      // eslint: disable-next-line
-      console.error(`You need FlexUI > 1.9.0 to use built-in redux; you are currently on ${VERSION}`);
-      return;
-    }
 
-    manager.store.addReducer(namespace, reducers);
-  }
 }
