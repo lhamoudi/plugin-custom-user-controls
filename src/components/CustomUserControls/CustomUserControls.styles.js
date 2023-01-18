@@ -27,4 +27,7 @@ export const UserControlsWrapper = styled('div')`
       order: ${props => props.activitiesConfig.length + 1};
     }
   }
+  & li:last-child {
+    display: none;
+  }
 `;
